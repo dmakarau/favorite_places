@@ -11,9 +11,11 @@ A Flutter application for managing and organizing your favorite places. Keep tra
 ## Features ✨
 
 - ✅ **Add New Places**: Create places with custom titles through a dedicated add screen
-- ✅ **Real-time List Display**: View all added places in a clean, organized list
+- ✅ **Interactive List Display**: View all added places with tap-to-view functionality
+- ✅ **Place Details**: Dedicated detail screen for each place
 - ✅ **State Management**: Powered by Riverpod for robust state management across the app
 - ✅ **Modern UI**: Clean and intuitive Material Design 3 interface
+- ✅ **Navigation**: Smooth navigation flow between all screens
 - ✅ **Responsive Design**: Beautiful empty state with helpful guidance when no places are added
 - ✅ **Immutable State**: Proper state management with immutable updates
 - 📱 Cross-platform support for all major platforms
@@ -69,7 +71,7 @@ lib/
 │   └── user_places.dart     # Riverpod state management for places
 ├── screens/
 │   ├── add_places.dart      # Add new place screen (✅ Implemented)
-│   ├── places_details.dart  # Place details view
+│   ├── places_details.dart  # Place details view (✅ Implemented)
 │   └── places_screen.dart   # Main places list screen (✅ Implemented)
 └── widgets/
     └── place_list_widget.dart # Reusable place list component (✅ Implemented)
@@ -80,16 +82,17 @@ lib/
 ### ✅ **Completed Features**
 - **Core App Structure**: Material Design 3 theming with custom color schemes
 - **Add Places Screen**: Fully functional form to add new places with titles
-- **Places List Screen**: Dynamic list display of all added places
+- **Places List Screen**: Dynamic list display of all added places with tap navigation
+- **Place Detail Screen**: Individual place view showing detailed information
+- **Navigation System**: Seamless navigation between list, add, and detail screens
 - **State Management**: Complete Riverpod integration with `NotifierProvider`
-- **Navigation**: Seamless navigation between list and add screens
 - **Empty State**: Beautiful empty state with location icon and helpful messaging
 - **Immutable Updates**: Proper state management with spread operator for list updates
 
 ### 🚧 **In Development**
 - [ ] Image capture and storage for places
 - [ ] GPS location integration and mapping
-- [ ] Detailed place view with full information
+- [ ] Enhanced place details with more information fields
 - [ ] Local data persistence (SQLite/Hive)
 - [ ] Search and filtering functionality
 - [ ] Categories and tags for organization
