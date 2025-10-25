@@ -10,15 +10,16 @@ A Flutter application for managing and organizing your favorite places. Keep tra
 
 ## Features ✨
 
-- ✅ **Add New Places**: Create places with custom titles through a dedicated add screen
-- ✅ **Interactive List Display**: View all added places with tap-to-view functionality
-- ✅ **Place Details**: Dedicated detail screen for each place
+- ✅ **Add New Places**: Create places with custom titles and photos through a dedicated add screen
+- ✅ **Camera Integration**: Take photos directly within the app using device camera
+- ✅ **Interactive List Display**: View all added places with photo thumbnails and tap-to-view functionality
+- ✅ **Full-Screen Image Viewing**: Dedicated detail screen showing place photos in full-screen
 - ✅ **State Management**: Powered by Riverpod for robust state management across the app
 - ✅ **Modern UI**: Clean and intuitive Material Design 3 interface
 - ✅ **Navigation**: Smooth navigation flow between all screens
 - ✅ **Responsive Design**: Beautiful empty state with helpful guidance when no places are added
+- ✅ **Cross-Platform Image Support**: Properly configured for iOS, Android, macOS, Web, Windows, and Linux
 - ✅ **Immutable State**: Proper state management with immutable updates
-- 📱 Cross-platform support for all major platforms
 
 ## Screenshots 📱
 
@@ -56,6 +57,7 @@ A Flutter application for managing and organizing your favorite places. Keep tra
 This project uses the following key packages:
 
 - `flutter_riverpod: ^2.4.9` - Modern state management solution for Flutter
+- `image_picker: ^1.2.0` - Camera and gallery image selection functionality
 - `google_fonts: ^6.3.2` - Custom fonts for better typography
 - `uuid: ^4.5.1` - Unique identifier generation for places
 - `cupertino_icons: ^1.0.8` - iOS-style icons
@@ -66,37 +68,41 @@ This project uses the following key packages:
 lib/
 ├── main.dart                 # App entry point with Riverpod setup
 ├── model/
-│   └── place.dart           # Place data model
+│   └── place.dart           # Place data model with image support
 ├── providers/
 │   └── user_places.dart     # Riverpod state management for places
 ├── screens/
-│   ├── add_places.dart      # Add new place screen (✅ Implemented)
-│   ├── places_details.dart  # Place details view (✅ Implemented)
+│   ├── add_places.dart      # Add new place screen with camera integration (✅ Implemented)
+│   ├── places_details.dart  # Place details with full-screen image view (✅ Implemented)
 │   └── places_screen.dart   # Main places list screen (✅ Implemented)
 └── widgets/
-    └── place_list_widget.dart # Reusable place list component (✅ Implemented)
+    ├── image_input.dart     # Camera input widget (✅ Implemented)
+    └── place_list_widget.dart # Place list with image thumbnails (✅ Implemented)
 ```
 
 ## Current Implementation Status 🚀
 
 ### ✅ **Completed Features**
 - **Core App Structure**: Material Design 3 theming with custom color schemes
-- **Add Places Screen**: Fully functional form to add new places with titles
-- **Places List Screen**: Dynamic list display of all added places with tap navigation
-- **Place Detail Screen**: Individual place view showing detailed information
+- **Add Places Screen**: Fully functional form to add new places with titles and camera integration
+- **Camera Functionality**: Take photos directly within the app using ImagePicker
+- **Image Management**: Complete image flow from capture to storage to display
+- **Places List Screen**: Dynamic list display with image thumbnails and tap navigation
+- **Place Detail Screen**: Full-screen image viewing with place information
 - **Navigation System**: Seamless navigation between list, add, and detail screens
 - **State Management**: Complete Riverpod integration with `NotifierProvider`
 - **Empty State**: Beautiful empty state with location icon and helpful messaging
+- **Cross-Platform Setup**: Proper configuration for iOS, Android, macOS, Web, Windows, and Linux
 - **Immutable Updates**: Proper state management with spread operator for list updates
 
 ### 🚧 **In Development**
-- [ ] Image capture and storage for places
 - [ ] GPS location integration and mapping
-- [ ] Enhanced place details with more information fields
+- [ ] Enhanced place details with location information
 - [ ] Local data persistence (SQLite/Hive)
 - [ ] Search and filtering functionality
 - [ ] Categories and tags for organization
 - [ ] Edit and delete place functionality
+- [ ] Image gallery with multiple photos per place
 
 ## State Management Architecture 🏗️
 
