@@ -1,0 +1,34 @@
+# Override GitHub language detection
+*.dart linguist-language=Dart
+*.cc linguist-vendored
+*.cpp linguist-vendored
+*.h linguist-vendored
+*.m linguist-vendored
+*.mm linguist-vendored
+*.swift linguist-vendored
+*.kt linguist-vendored
+*.java linguist-vendored
+*.gradle linguist-vendored
+*.gradle.kts linguist-vendored
+*.pro linguist-vendored
+*.pbxproj linguist-vendored
+*.plist linguist-vendored
+*.xcconfig linguist-vendored
+*.storyboard linguist-vendored
+*.xib linguist-vendored
+
+# Mark generated/platform code as vendored to exclude from language stats
+android/** linguist-vendored
+ios/** linguist-vendored
+linux/** linguist-vendored
+macos/** linguist-vendored
+windows/** linguist-vendored
+web/** linguist-vendored=false
+build/** linguist-vendored
+
+# Ensure Dart files are counted
+lib/** linguist-vendored=false
+test/** linguist-vendored=false
+
+# Set primary language
+* linguist-language=Dart
