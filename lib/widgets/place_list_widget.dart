@@ -50,6 +50,12 @@ class PlaceList extends StatelessWidget {
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
+        subtitle: Text(
+          places[index].location?.address ?? 'Unknown',
+          style: Theme.of(context).textTheme.bodySmall!.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
