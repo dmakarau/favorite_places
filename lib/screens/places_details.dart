@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_favorite_places/model/place.dart';
+import 'package:my_favorite_places/screens/map_screen.dart';
 import 'package:my_favorite_places/services/location_service.dart';
 
 class PlaceDetailScreen extends StatelessWidget {
@@ -109,43 +110,55 @@ class PlaceDetailScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 16),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: SizedBox(
-                                height: 200,
-                                width: double.infinity,
-                                child: Image.network(
-                                  locationImage,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) => Container(
-                                    color: Theme.of(context).colorScheme.surfaceContainerHigh,
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.map_outlined,
-                                          size: 48,
-                                          color: Theme.of(context).colorScheme.primary,
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          'Map Preview',
-                                          style: Theme.of(context).textTheme.titleMedium,
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          'Lat: ${place.location!.latitude.toStringAsFixed(6)}',
-                                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (ctx) => MapScreen(
+                                      location: place.location!,
+                                      isSelecting: false,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: SizedBox(
+                                  height: 200,
+                                  width: double.infinity,
+                                  child: Image.network(
+                                    locationImage,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) => Container(
+                                      color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.map_outlined,
+                                            size: 48,
+                                            color: Theme.of(context).colorScheme.primary,
                                           ),
-                                        ),
-                                        Text(
-                                          'Lng: ${place.location!.longitude.toStringAsFixed(6)}',
-                                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            'Map Preview',
+                                            style: Theme.of(context).textTheme.titleMedium,
                                           ),
-                                        ),
-                                      ],
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            'Lat: ${place.location!.latitude.toStringAsFixed(6)}',
+                                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                            ),
+                                          ),
+                                          Text(
+                                            'Lng: ${place.location!.longitude.toStringAsFixed(6)}',
+                                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),

@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Required: Internet permission for Google Maps -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Required: Network state permission for Google Maps -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- Optional: Camera permission for taking photos -->
     <uses-permission android:name="android.permission.CAMERA" />
     <!-- Optional: Storage permission for saving photos (API < 29) -->
@@ -8,6 +12,8 @@
         android:label="my_favorite_places"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="${googleMapsApiKey}"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

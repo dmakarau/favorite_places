@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../model/place.dart';
+import '../screens/map_screen.dart';
 
 class LocationInput extends StatefulWidget {
   const LocationInput({super.key, required this.onSelectLocation});
@@ -31,6 +32,28 @@ class _LocationInputState extends State<LocationInput> {
       return '';
     }
     return 'https://maps.googleapis.com/maps/api/staticmap?center=$lat,$lng&zoom=16&size=600x300&maptype=roadmap&markers=color:red%7Clabel:A%7C$lat,$lng&key=$apiKey';
+  }
+
+  Future _savePlace(double latitude, double longitude) async {
+    final apiKey = dotenv.env['GOOGLE_MAPS_API_KEY'] ?? '';
+    final url = Uri.parse(
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=$apiKey',
+      );
+      final response = await http.get(url);
+      final resData = json.decode(response.body);
+      final address = resData['results'][0]['formatted_address'];
+
+      setState(() {
+        _pickedLocation = PlaceLocation(
+          latitude: latitude,
+          longitude: longitude,
+          address: address,
+        );
+        _isGettingLocation = false;
+      });
+
+      widget.onSelectLocation(_pickedLocation!);
+
   }
 
   void _getCurrentLocation() async {
@@ -102,7 +125,8 @@ class _LocationInputState extends State<LocationInput> {
           _pickedLocation = PlaceLocation(
             latitude: lat,
             longitude: lng,
-            address: 'Location: ${lat.toStringAsFixed(4)}, ${lng.toStringAsFixed(4)}',
+            address:
+                'Location: ${lat.toStringAsFixed(4)}, ${lng.toStringAsFixed(4)}',
           );
           _isGettingLocation = false;
         });
@@ -110,22 +134,9 @@ class _LocationInputState extends State<LocationInput> {
         return;
       }
 
-      final url = Uri.parse(
-          'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey');
-      final response = await http.get(url);
-      final resData = json.decode(response.body);
-      final address = resData['results'][0]['formatted_address'];
+      _savePlace(lat, lng);
 
-      setState(() {
-        _pickedLocation = PlaceLocation(
-          latitude: lat,
-          longitude: lng,
-          address: address,
-        );
-        _isGettingLocation = false;
-      });
-
-      widget.onSelectLocation(_pickedLocation!);
+      
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -144,6 +155,16 @@ class _LocationInputState extends State<LocationInput> {
         _isGettingLocation = false;
       });
     }
+  }
+
+  void _selectOnMap() async {
+    final pickedLocation = await Navigator.of(
+      context,
+    ).push<PlaceLocation>(MaterialPageRoute(builder: (ctx) => const MapScreen()));
+    if (pickedLocation == null) {
+      return;
+    }
+    _savePlace(pickedLocation.latitude, pickedLocation.longitude);
   }
 
   @override
@@ -253,11 +274,7 @@ class _LocationInputState extends State<LocationInput> {
               children: [
                 Row(
                   children: [
-                    Icon(
-                      Icons.location_on,
-                      color: Colors.white,
-                      size: 20,
-                    ),
+                    Icon(Icons.location_on, color: Colors.white, size: 20),
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
@@ -304,9 +321,7 @@ class _LocationInputState extends State<LocationInput> {
         Container(
           height: 170,
           width: double.infinity,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-          ),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
           clipBehavior: Clip.antiAlias,
           child: previewContent,
         ),
@@ -317,19 +332,23 @@ class _LocationInputState extends State<LocationInput> {
             Expanded(
               child: FilledButton.icon(
                 onPressed: _isGettingLocation ? null : _getCurrentLocation,
-                icon: _isGettingLocation 
-                  ? SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          Theme.of(context).colorScheme.onPrimary,
+                icon: _isGettingLocation
+                    ? SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Theme.of(context).colorScheme.onPrimary,
+                          ),
                         ),
-                      ),
-                    )
-                  : const Icon(Icons.location_on),
-                label: Text(_isGettingLocation ? 'Getting Location...' : 'Get Current Location'),
+                      )
+                    : const Icon(Icons.location_on),
+                label: Text(
+                  _isGettingLocation
+                      ? 'Getting Location...'
+                      : 'Get Current Location',
+                ),
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
@@ -341,19 +360,7 @@ class _LocationInputState extends State<LocationInput> {
             const SizedBox(width: 12),
             Expanded(
               child: OutlinedButton.icon(
-                onPressed: () {
-                  // TODO: Implement map selection
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: const Text('Map selection coming soon!'),
-                      behavior: SnackBarBehavior.floating,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      margin: const EdgeInsets.all(16),
-                    ),
-                  );
-                },
+                onPressed: _selectOnMap,
                 icon: const Icon(Icons.map_outlined),
                 label: const Text('Select on Map'),
                 style: OutlinedButton.styleFrom(

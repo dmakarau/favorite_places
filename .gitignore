@@ -35,6 +35,7 @@ migrate_working_dir/
 .pub/
 /build/
 /coverage/
+pubspec.lock
 
 # Symbolication related
 app.*.symbols
@@ -77,6 +78,11 @@ app.*.map.json
 **/ios/Runner/GeneratedPluginRegistrant.*
 **/macos/Flutter/GeneratedPluginRegistrant.swift
 **/macos/Flutter/ephemeral
+
+# iOS build artifacts
+**/ios/**/build/
+**/ios/**/XCBuildData/
+**/ios/**/PROJECT*
 
 # Windows/Linux specific
 **/windows/**/flutter/generated_plugin_registrant.cc
