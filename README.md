@@ -4,9 +4,24 @@
 ![Dart](https://img.shields.io/badge/Dart-3.9.2+-0175C2?style=for-the-badge&logo=dart&logoColor=white)
 ![Riverpod](https://img.shields.io/badge/Riverpod-3.0.3-00D4AA?style=for-the-badge&logo=flutter&logoColor=white)
 ![Google Maps](https://img.shields.io/badge/Google%20Maps-API-4285F4?style=for-the-badge&logo=google-maps&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
 ![License](https://img.shields.io/badge/License-Educational-brightgreen?style=for-the-badge)
 
-A Flutter app for saving your favorite places with photos and locations. Take pictures, get GPS coordinates, view on Google Maps, and organize your memories with a clean, modern interface.
+A modern Flutter app for saving your favorite places with photos and locations. Take pictures, get GPS coordinates, view on Google Maps, and organize your memories with a clean interface powered by local database storage.
+
+## ✨ What's New in v2.0
+
+### 🗄️ **Persistent Data Storage**
+- **SQLite Integration**: All your places are now saved locally and persist between app sessions
+- **Reliable Image Storage**: Photos stored in documents directory (no more disappearing images!)
+- **Database-Driven State**: ConsumerStatefulWidget with proper async data loading
+- **Automatic Loading**: Places load automatically when app starts
+
+### 🏗️ **Enhanced Architecture**
+- **ConsumerStatefulWidget**: Proper lifecycle management for async operations
+- **Database Layer**: Clean separation with SQLite database operations
+- **Improved Error Handling**: Better handling of missing files and database errors
+- **Unique File Naming**: Timestamp-based naming prevents image conflicts
 
 ## 📱 Features
 
@@ -19,13 +34,16 @@ A Flutter app for saving your favorite places with photos and locations. Take pi
 - **Map Previews**: Static map thumbnails for each place
 - **Detail Views**: Full-screen place information with expandable maps
 - **Modern UI**: Material Design 3 with professional color scheme
+- **Persistent Storage**: SQLite database ensures your data survives app restarts
 
 ### Technical Highlights  
-- **Clean Architecture**: Proper separation of concerns
-- **Riverpod State Management**: Modern reactive state handling
+- **Clean Architecture**: Proper separation of concerns with service layer
+- **Riverpod State Management**: Modern reactive state handling with ConsumerStatefulWidget
+- **SQLite Database**: Local data persistence with proper schema design
 - **Secure API Management**: Environment-based configuration
 - **Cross-Platform**: Android, iOS, and more
 - **Null Safety**: Full Dart null safety compliance
+- **File Management**: Robust image storage in documents directory
 
 ## 🚀 Quick Start
 
@@ -79,6 +97,11 @@ That's it! The app will automatically configure API keys for both Android and iO
 flutter_riverpod: ^3.0.3        # Modern state management
 flutter_dotenv: ^6.0.0          # Secure environment config
 
+# Database & Storage
+sqflite: ^2.4.2                 # Local SQLite database
+path_provider: ^2.1.5           # File system paths
+path: ^1.9.1                     # Path manipulation utilities
+
 # Maps & Location  
 google_maps_flutter: ^2.13.1    # Interactive Google Maps
 location: ^8.0.1                 # GPS and permissions
@@ -95,9 +118,9 @@ uuid: ^4.5.1                     # Unique IDs
 📁 lib/
 ├── 🎯 main.dart                 # App entry with themes
 ├── 📊 model/
-│   └── place.dart              # Data models
+│   └── place.dart              # Data models with UUID support
 ├── 🖥️ screens/
-│   ├── places_screen.dart      # Main list view
+│   ├── places_screen.dart      # Main list (ConsumerStatefulWidget)
 │   ├── add_places.dart         # Add new place
 │   ├── places_details.dart     # Place details with maps
 │   └── map_screen.dart         # Interactive map picker
@@ -105,9 +128,26 @@ uuid: ^4.5.1                     # Unique IDs
 │   ├── location_input.dart     # Location picker component
 │   ├── image_input.dart        # Camera component
 │   └── place_list_widget.dart  # List display
-└── 🔧 services/
-    └── location_service.dart   # Google Maps API integration
+├── 🔧 providers/
+│   └── user_places.dart        # Riverpod notifier with SQLite
+└── 🗄️ Database Schema:
+    └── user_places table:
+        ├── id (TEXT PRIMARY KEY)
+        ├── title (TEXT)
+        ├── image (TEXT - file path)
+        ├── lat (REAL)
+        ├── lng (REAL)
+        └── address (TEXT)
 ```
+
+### Database Design
+The app uses SQLite for local data persistence:
+
+- **Automatic Schema Creation**: Database and tables created on first launch
+- **Unique IDs**: UUID v4 for each place entry
+- **File Path Storage**: Images stored as file paths, actual files in documents directory
+- **Coordinate Storage**: Latitude and longitude as REAL values for precise location data
+- **Address Caching**: Resolved addresses stored to reduce API calls
 
 ## 🤝 Contributing
 
@@ -127,11 +167,35 @@ Check out the [`docs/`](docs/) folder for detailed setup guides:
 - **[Architecture Overview](docs/architecture.md)** - How the app is structured
 - **[Troubleshooting](docs/troubleshooting.md)** - Common issues and solutions
 
-## 🐛 Known Issues
+## 🐛 Known Issues & Solutions
 
+### Fixed in v2.0:
+- ✅ **Image Persistence**: Images now persist between app restarts (moved from cache to documents directory)
+- ✅ **Data Loss**: All places now saved to SQLite database
+- ✅ **State Management**: Proper async loading with ConsumerStatefulWidget
+
+### Current Known Issues:
 - Map previews may take a moment to load on first app start
 - Location permissions need to be granted for GPS features
 - Static maps require internet connection (no offline caching yet)
+- Old images (from v1.x) stored in cache directory will be missing after upgrade
+
+### Troubleshooting:
+
+**Images not showing after app restart?**
+- This was fixed in v2.0 - new images will persist properly
+- Old images from previous versions may be lost (stored in cache directory)
+- Solution: Re-add places with images after upgrading
+
+**Database errors?**
+- Make sure you have the latest dependencies: `flutter pub get`
+- Clear app data if upgrading from a version without SQLite
+- Check console for specific SQLite error messages
+
+**Maps not loading?**
+- Verify your Google Maps API key is correctly set in `.env`
+- Check that required APIs are enabled in Google Cloud Console
+- Ensure device has internet connection for initial map load
 
 ## 📱 Platform Support
 
