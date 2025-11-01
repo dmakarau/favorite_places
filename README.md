@@ -7,214 +7,148 @@
 ![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
 ![License](https://img.shields.io/badge/License-Educational-brightgreen?style=for-the-badge)
 
-A modern Flutter app for saving your favorite places with photos and locations. Take pictures, get GPS coordinates, view on Google Maps, and organize your memories with a clean interface powered by local database storage.
+A Flutter app where you can save your favorite places with photos and locations. Built with Material Design 3, it lets you capture moments with the camera, grab GPS coordinates, and explore everything on interactive Google Maps. All your data persists locally using SQLite.
 
-## ✨ What's New in v2.0
+## Features
 
-### 🗄️ **Persistent Data Storage**
-- **SQLite Integration**: All your places are now saved locally and persist between app sessions
-- **Reliable Image Storage**: Photos stored in documents directory (no more disappearing images!)
-- **Database-Driven State**: ConsumerStatefulWidget with proper async data loading
-- **Automatic Loading**: Places load automatically when app starts
+The app combines camera functionality with location services and mapping. You can take photos directly in the app or select from your gallery, automatically detect your current location via GPS, or manually pick spots by tapping on Google Maps. Each place gets stored with its photo, coordinates, and a human-readable address that we resolve using Google's geocoding API.
 
-### 🏗️ **Enhanced Architecture**
-- **ConsumerStatefulWidget**: Proper lifecycle management for async operations
-- **Database Layer**: Clean separation with SQLite database operations
-- **Improved Error Handling**: Better handling of missing files and database errors
-- **Unique File Naming**: Timestamp-based naming prevents image conflicts
+The UI follows Material Design 3 principles with a professional indigo and teal color scheme. I've implemented proper state management using Riverpod and structured everything with clean architecture patterns. All your places are saved to a local SQLite database, so nothing gets lost when you restart the app.
 
-## 📱 Features
+**Key functionality:**
+- Camera integration with image_picker
+- GPS location detection with proper permission handling  
+- Interactive Google Maps for location selection
+- Automatic address resolution from coordinates
+- Static map previews for each saved place
+- Full-screen detail views with expandable maps
+- Persistent local storage with SQLite
+- Modern Material Design 3 interface
 
-### Core Functionality
-- **Add Places**: Create entries with custom titles and photos
-- **Camera Integration**: Take photos directly in the app
-- **Location Services**: Automatic GPS detection with permission handling
-- **Interactive Maps**: Select locations by tapping on Google Maps
-- **Address Resolution**: Converts GPS coordinates to readable addresses  
-- **Map Previews**: Static map thumbnails for each place
-- **Detail Views**: Full-screen place information with expandable maps
-- **Modern UI**: Material Design 3 with professional color scheme
-- **Persistent Storage**: SQLite database ensures your data survives app restarts
+## Getting Started
 
-### Technical Highlights  
-- **Clean Architecture**: Proper separation of concerns with service layer
-- **Riverpod State Management**: Modern reactive state handling with ConsumerStatefulWidget
-- **SQLite Database**: Local data persistence with proper schema design
-- **Secure API Management**: Environment-based configuration
-- **Cross-Platform**: Android, iOS, and more
-- **Null Safety**: Full Dart null safety compliance
-- **File Management**: Robust image storage in documents directory
+You'll need Flutter 3.9.2+ and a Google Maps API key to get everything working. The setup is pretty straightforward:
 
-## 🚀 Quick Start
-
-### What You'll Need
-- Flutter SDK (3.9.2+)
-- A Google Maps API key (free to get!)
-- Android Studio or VS Code
-- About 10 minutes to set up
-
-### Setup Steps
-
-1. **Get the code**
+1. **Clone and install dependencies**
    ```bash
    git clone <your-repo-url>
    cd my_favorite_places
    flutter pub get
    ```
 
-2. **Set up Google Maps** (Required for location features)
+2. **Set up Google Maps API**
+   
+   Copy the environment template:
    ```bash
-   # Copy the template
    cp .env.template .env
    ```
    
-   Then get your API key:
-   - Go to [Google Cloud Console](https://console.cloud.google.com/)
-   - Create a project (or use existing)
-   - Enable these APIs:
-     - Maps SDK for Android
-     - Maps SDK for iOS  
-     - Maps JavaScript API
-     - Geocoding API
-   - Create an API Key
-   - Add it to your `.env` file:
-     ```
-     GOOGLE_MAPS_API_KEY=your_actual_key_here
-     ```
+   Then grab an API key from [Google Cloud Console](https://console.cloud.google.com/). You'll need to enable these APIs:
+   - Maps SDK for Android
+   - Maps SDK for iOS  
+   - Maps JavaScript API
+   - Geocoding API
+   
+   Add your key to the `.env` file:
+   ```
+   GOOGLE_MAPS_API_KEY=your_actual_key_here
+   ```
 
-3. **Run the app**
+3. **Run it**
    ```bash
    flutter run
    ```
 
-That's it! The app will automatically configure API keys for both Android and iOS.
+The app handles API key injection for both Android and iOS automatically, so once you've got the key set up, everything should just work.
 
-## 🛠️ Technical Stack
+## Tech Stack
 
-### Dependencies
+I built this with Flutter and Riverpod for state management. The database layer uses SQLite for local persistence, and Google Maps handles all the location stuff. Here's what's under the hood:
+
 ```yaml
-# State Management & Architecture
-flutter_riverpod: ^3.0.3        # Modern state management
-flutter_dotenv: ^6.0.0          # Secure environment config
-
-# Database & Storage
-sqflite: ^2.4.2                 # Local SQLite database
-path_provider: ^2.1.5           # File system paths
-path: ^1.9.1                     # Path manipulation utilities
-
-# Maps & Location  
-google_maps_flutter: ^2.13.1    # Interactive Google Maps
-location: ^8.0.1                 # GPS and permissions
-http: ^1.5.0                     # API calls for geocoding
-
-# UI & Media
+# Core dependencies
+flutter_riverpod: ^3.0.3        # State management
+sqflite: ^2.4.2                 # Local database
+google_maps_flutter: ^2.13.1    # Interactive maps
+location: ^8.0.1                 # GPS access
 image_picker: ^1.2.0             # Camera integration
-google_fonts: ^6.3.2            # Professional typography
-uuid: ^4.5.1                     # Unique IDs
+google_fonts: ^6.3.2            # Typography
+flutter_dotenv: ^6.0.0          # Environment config
 ```
 
-### Architecture Overview
+## Architecture
+
+The app follows a clean architecture pattern with clear separation between UI, business logic, and data layers:
+
 ```
-📁 lib/
-├── 🎯 main.dart                 # App entry with themes
-├── 📊 model/
-│   └── place.dart              # Data models with UUID support
-├── 🖥️ screens/
+lib/
+├── main.dart                    # App entry point with Material 3 theming
+├── model/
+│   └── place.dart              # Place and PlaceLocation data models
+├── providers/
+│   └── user_places.dart        # Riverpod notifier with SQLite operations
+├── screens/
 │   ├── places_screen.dart      # Main list (ConsumerStatefulWidget)
-│   ├── add_places.dart         # Add new place
-│   ├── places_details.dart     # Place details with maps
-│   └── map_screen.dart         # Interactive map picker
-├── 🧩 widgets/
-│   ├── location_input.dart     # Location picker component
-│   ├── image_input.dart        # Camera component
-│   └── place_list_widget.dart  # List display
-├── 🔧 providers/
-│   └── user_places.dart        # Riverpod notifier with SQLite
-└── 🗄️ Database Schema:
-    └── user_places table:
-        ├── id (TEXT PRIMARY KEY)
-        ├── title (TEXT)
-        ├── image (TEXT - file path)
-        ├── lat (REAL)
-        ├── lng (REAL)
-        └── address (TEXT)
+│   ├── add_places.dart         # Add new place form
+│   ├── places_details.dart     # Place details with map
+│   └── map_screen.dart         # Interactive location picker
+└── widgets/
+    ├── location_input.dart     # GPS + map selection widget
+    ├── image_input.dart        # Camera widget
+    └── place_list_widget.dart  # Places list display
 ```
 
-### Database Design
-The app uses SQLite for local data persistence:
+**Database schema:**
+```sql
+CREATE TABLE user_places(
+  id TEXT PRIMARY KEY,      -- UUID v4
+  title TEXT,              -- User-defined place name
+  image TEXT,              -- File path to stored image
+  lat REAL,                -- Latitude coordinate
+  lng REAL,                -- Longitude coordinate  
+  address TEXT             -- Resolved address from geocoding
+);
+```
 
-- **Automatic Schema Creation**: Database and tables created on first launch
-- **Unique IDs**: UUID v4 for each place entry
-- **File Path Storage**: Images stored as file paths, actual files in documents directory
-- **Coordinate Storage**: Latitude and longitude as REAL values for precise location data
-- **Address Caching**: Resolved addresses stored to reduce API calls
+The `UserPlacesNotifier` handles all database operations and exposes a reactive state that the UI can watch. Images get stored in the app's documents directory with timestamp-based naming to avoid conflicts.
 
-## 🤝 Contributing
+## Contributing
 
-Contributions are welcome! If you'd like to contribute:
+Feel free to fork this and make it better! The codebase is pretty clean and well-documented. If you want to contribute:
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Test thoroughly (especially the map integration!)
-5. Submit a pull request
+1. Fork the repo
+2. Create a feature branch (`git checkout -b feature/cool-new-thing`)
+3. Make your changes (test the map integration especially - it's the trickiest part)
+4. Submit a pull request
 
-## 📚 Documentation
+## Known Issues
 
-Check out the [`docs/`](docs/) folder for detailed setup guides:
+A few things I'm aware of but haven't gotten around to fixing:
 
-- **[API Key Setup Guide](docs/API_KEY_SETUP.md)** - Step-by-step Google Maps configuration
-- **[Architecture Overview](docs/architecture.md)** - How the app is structured
-- **[Troubleshooting](docs/troubleshooting.md)** - Common issues and solutions
+- Map previews can be slow to load on first launch (Google Maps SDK initialization)
+- You need to grant location permissions for GPS features to work
+- Static maps need internet connection - no offline caching yet
+- If you're upgrading from an older version, images stored in the cache directory will be missing (this got fixed by moving to documents directory)
 
-## 🐛 Known Issues & Solutions
+**Common troubleshooting:**
 
-### Fixed in v2.0:
-- ✅ **Image Persistence**: Images now persist between app restarts (moved from cache to documents directory)
-- ✅ **Data Loss**: All places now saved to SQLite database
-- ✅ **State Management**: Proper async loading with ConsumerStatefulWidget
+*Images disappearing?* - This was a bug in earlier versions where images were stored in cache directory. Fixed now, but old images might be gone.
 
-### Current Known Issues:
-- Map previews may take a moment to load on first app start
-- Location permissions need to be granted for GPS features
-- Static maps require internet connection (no offline caching yet)
-- Old images (from v1.x) stored in cache directory will be missing after upgrade
+*Maps not loading?* - Check your API key in `.env` and make sure the required Google APIs are enabled.
 
-### Troubleshooting:
+*Database issues?* - Run `flutter clean && flutter pub get` and try again.
 
-**Images not showing after app restart?**
-- This was fixed in v2.0 - new images will persist properly
-- Old images from previous versions may be lost (stored in cache directory)
-- Solution: Re-add places with images after upgrading
+## Platform Support
 
-**Database errors?**
-- Make sure you have the latest dependencies: `flutter pub get`
-- Clear app data if upgrading from a version without SQLite
-- Check console for specific SQLite error messages
+- ✅ Android (API 21+) - tested and working
+- ✅ iOS (iOS 11+) - tested and working
+- 🔄 Web - maps work, camera needs testing
+- 🔄 Desktop - basic functionality works
 
-**Maps not loading?**
-- Verify your Google Maps API key is correctly set in `.env`
-- Check that required APIs are enabled in Google Cloud Console
-- Ensure device has internet connection for initial map load
+Built with Flutter 3.9.2+ and lots of coffee ☕
 
-## 📱 Platform Support
+## Documentation
 
-- ✅ Android (API 21+)
-- ✅ iOS (iOS 11+) 
-- 🔄 Web (maps work, camera needs testing)
-- 🔄 Desktop (basic functionality)
-
-## 🙏 Thanks To
-
-- Flutter team for the amazing framework
-- Google Maps team for the location APIs
-- Riverpod team for excellent state management
-- The Flutter community for helpful packages and advice
-
-## 📄 License
-
-Educational use - feel free to learn from, modify, and build upon this code!
-
----
-
-*Built with ❤️ using Flutter*
+Check the `docs/` folder for more detailed setup guides:
+- [API Key Setup](docs/API_KEY_SETUP.md) - Detailed Google Maps configuration
+- Additional troubleshooting guides as needed
