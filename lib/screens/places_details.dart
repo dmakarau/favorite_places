@@ -50,6 +50,30 @@ class PlaceDetailScreen extends StatelessWidget {
                     child: Image.file(
                       place.image,
                       fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.image_not_supported_outlined,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                  size: 64,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Image not available',
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                   Container(

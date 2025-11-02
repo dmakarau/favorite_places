@@ -30,30 +30,72 @@ class UserPlacesNotifier extends Notifier<List<Place>> {
   Future<void> loadPlaces() async {
     final db = await _getDatabase();
     final data = await db.query('user_places');
-    final places = data.map((row) {
+    final validPlaces = <Place>[];
+    
+    // Clean up old cache files from previous versions
+    await _cleanupCacheFiles();
+    
+    for (final row in data) {
       final imagePath = row['image'] as String;
       final imageFile = File(imagePath);
       
-      // Check if image file exists, if not, we might need to handle this case
-      if (!imageFile.existsSync()) {
-        print('Warning: Image file not found at $imagePath');
-        // You could either skip this place or use a default image
-        // For now, we'll still create the File object but it won't display
+      // Check if image file exists and is not empty
+      if (await imageFile.exists()) {
+        try {
+          final fileSize = await imageFile.length();
+          if (fileSize > 0) {
+            // File exists and has content, create place
+            final place = Place(
+              id: row['id'] as String,
+              title: row['title'] as String,
+              image: imageFile,
+              location: PlaceLocation(
+                latitude: row['lat'] as double,
+                longitude: row['lng'] as double,
+                address: row['address'] as String? ?? '',
+              ),
+            );
+            validPlaces.add(place);
+          } else {
+            // File is empty, remove from database
+            print('Removing place with empty image file: $imagePath');
+            await db.delete('user_places', where: 'id = ?', whereArgs: [row['id']]);
+          }
+        } catch (e) {
+          // Error reading file, remove from database
+          print('Error reading image file $imagePath: $e');
+          await db.delete('user_places', where: 'id = ?', whereArgs: [row['id']]);
+        }
+      } else {
+        // File doesn't exist, remove from database
+        print('Removing place with missing image file: $imagePath');
+        await db.delete('user_places', where: 'id = ?', whereArgs: [row['id']]);
       }
-      
-      return Place(
-        id: row['id'] as String,
-        title: row['title'] as String,
-        image: imageFile,
-        location: PlaceLocation(
-          latitude: row['lat'] as double,
-          longitude: row['lng'] as double,
-          address: row['address'] as String? ?? '',
-        ),
-      );
-    }).toList();
+    }
 
-    state = places;
+    state = validPlaces;
+  }
+
+  /// Clean up orphaned cache files that might still exist from older versions
+  Future<void> _cleanupCacheFiles() async {
+    try {
+      final cacheDir = await syspaths.getApplicationCacheDirectory();
+      final cacheFiles = await cacheDir.list().toList();
+      
+      for (final file in cacheFiles) {
+        if (file is File && file.path.contains('scaled_')) {
+          // This looks like an old image file from cache directory
+          try {
+            await file.delete();
+            print('Cleaned up old cache file: ${file.path}');
+          } catch (e) {
+            print('Could not delete cache file ${file.path}: $e');
+          }
+        }
+      }
+    } catch (e) {
+      print('Error during cache cleanup: $e');
+    }
   }
 
   void addPlace(String title, File image, PlaceLocation? location) async {
@@ -80,6 +122,32 @@ class UserPlacesNotifier extends Notifier<List<Place>> {
     });
 
     state = [newPlace, ...state];
+  }
+
+  Future<void> deletePlace(String placeId) async {
+    // Find the place to get its image path
+    final placeToDelete = state.firstWhere((place) => place.id == placeId);
+    
+    // Delete from database
+    final db = await _getDatabase();
+    await db.delete(
+      'user_places',
+      where: 'id = ?',
+      whereArgs: [placeId],
+    );
+
+    // Delete the image file if it exists
+    try {
+      if (await placeToDelete.image.exists()) {
+        await placeToDelete.image.delete();
+      }
+    } catch (e) {
+      print('Warning: Could not delete image file: $e');
+      // Continue anyway - database record is more important
+    }
+
+    // Update state to remove the place
+    state = state.where((place) => place.id != placeId).toList();
   }
 }
 

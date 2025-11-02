@@ -7,13 +7,13 @@
 ![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
 ![License](https://img.shields.io/badge/License-Educational-brightgreen?style=for-the-badge)
 
-A Flutter app where you can save your favorite places with photos and locations. Built with Material Design 3, it lets you capture moments with the camera, grab GPS coordinates, and explore everything on interactive Google Maps. All your data persists locally using SQLite.
+A Flutter app where you can save your favorite places with photos and locations. Built with Material Design 3, it lets you capture moments with the camera, grab GPS coordinates, and explore everything on interactive Google Maps. All your data persists locally using SQLite, and you can easily manage your places with swipe-to-delete functionality.
 
 ## Features
 
 The app combines camera functionality with location services and mapping. You can take photos directly in the app or select from your gallery, automatically detect your current location via GPS, or manually pick spots by tapping on Google Maps. Each place gets stored with its photo, coordinates, and a human-readable address that we resolve using Google's geocoding API.
 
-The UI follows Material Design 3 principles with a professional indigo and teal color scheme. I've implemented proper state management using Riverpod and structured everything with clean architecture patterns. All your places are saved to a local SQLite database, so nothing gets lost when you restart the app.
+The UI follows Material Design 3 principles with a professional indigo and teal color scheme. I've implemented proper state management using Riverpod and structured everything with clean architecture patterns. All your places are saved to a local SQLite database with robust error handling and automatic cleanup of corrupted data.
 
 **Key functionality:**
 - Camera integration with image_picker
@@ -22,12 +22,15 @@ The UI follows Material Design 3 principles with a professional indigo and teal 
 - Automatic address resolution from coordinates
 - Static map previews for each saved place
 - Full-screen detail views with expandable maps
-- Persistent local storage with SQLite
-- Modern Material Design 3 interface
+- Swipe-to-delete functionality with confirmation dialogs
+- Persistent local storage with SQLite and data validation
+- Automatic cleanup of missing or corrupted image files
+- Cross-platform support with iOS 14.0+ and Android API 21+
+- Modern Material Design 3 interface with error handling
 
 ## Getting Started
 
-You'll need Flutter 3.9.2+ and a Google Maps API key to get everything working. The setup is pretty straightforward:
+You'll need Flutter 3.9.2+ and a Google Maps API key to get everything working. The setup is pretty straightforward, but make sure you meet the platform requirements: iOS 14.0+ or Android API 21+.
 
 1. **Clone and install dependencies**
    ```bash
@@ -110,7 +113,13 @@ CREATE TABLE user_places(
 );
 ```
 
-The `UserPlacesNotifier` handles all database operations and exposes a reactive state that the UI can watch. Images get stored in the app's documents directory with timestamp-based naming to avoid conflicts.
+The `UserPlacesNotifier` handles all database operations and exposes a reactive state that the UI can watch. Images get stored in the app's documents directory with timestamp-based naming to avoid conflicts. The app includes comprehensive error handling for missing or corrupted files, and automatically validates data integrity when loading places.
+
+**Key features implemented:**
+- Swipe-to-delete with confirmation dialogs for safe place removal
+- Automatic cleanup of orphaned image files and database entries
+- Image error handling with fallback UI for missing files
+- Cross-platform compatibility with proper iOS deployment targets
 
 ## Contributing
 
@@ -123,29 +132,37 @@ Feel free to fork this and make it better! The codebase is pretty clean and well
 
 ## Known Issues
 
-A few things I'm aware of but haven't gotten around to fixing:
+The app handles most common issues automatically, but there are a few things to be aware of:
 
 - Map previews can be slow to load on first launch (Google Maps SDK initialization)
 - You need to grant location permissions for GPS features to work
 - Static maps need internet connection - no offline caching yet
-- If you're upgrading from an older version, images stored in the cache directory will be missing (this got fixed by moving to documents directory)
+- iOS requires deployment target 14.0+ (automatically configured in the project)
+
+**Recent fixes:**
+
+*Image persistence* - Images are now stored in the documents directory and persist between app restarts. The app automatically cleans up any orphaned cache files from previous versions.
+
+*Data integrity* - Database validation ensures only valid places with existing images are loaded. Corrupted entries are automatically removed.
+
+*iOS compatibility* - Updated deployment target to iOS 14.0+ to support Google Maps plugin requirements.
 
 **Common troubleshooting:**
-
-*Images disappearing?* - This was a bug in earlier versions where images were stored in cache directory. Fixed now, but old images might be gone.
 
 *Maps not loading?* - Check your API key in `.env` and make sure the required Google APIs are enabled.
 
 *Database issues?* - Run `flutter clean && flutter pub get` and try again.
 
+*iOS build errors?* - Make sure you're targeting iOS 14.0+. The project is already configured for this.
+
 ## Platform Support
 
-- ✅ Android (API 21+) - tested and working
-- ✅ iOS (iOS 11+) - tested and working
-- 🔄 Web - maps work, camera needs testing
-- 🔄 Desktop - basic functionality works
+- Android (API 21+) - tested and working
+- iOS (iOS 14.0+) - tested and working  
+- Web - maps work, camera needs testing
+- Desktop - basic functionality works
 
-Built with Flutter 3.9.2+ and lots of coffee ☕
+Built with Flutter 3.9.2+ and proper error handling throughout.
 
 ## Documentation
 

@@ -49,7 +49,7 @@ class _MapScreenState extends State<MapScreen> {
       ),
       body: GoogleMap(
         onMapCreated: (GoogleMapController controller) {
-          // Map created successfully
+          print("✅ Google Map created successfully on iOS");
         },
         initialCameraPosition: CameraPosition(
           target: LatLng(currentLocation.latitude, currentLocation.longitude),
@@ -57,6 +57,7 @@ class _MapScreenState extends State<MapScreen> {
         ),
         onTap: widget.isSelecting
             ? (LatLng position) {
+                print("📍 Map tapped at: ${position.latitude}, ${position.longitude}");
                 setState(() {
                   _pickedLocation = position;
                 });
